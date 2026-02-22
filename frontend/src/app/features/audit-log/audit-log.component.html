@@ -1,0 +1,107 @@
+<div class="page-header">
+  <div>
+    <h1 class="text-title-1">{{ 'AUDIT.TITLE' | translate }}</h1>
+    <p class="text-subhead" style="color:var(--color-text-secondary)">{{ 'AUDIT.SUBTITLE' | translate }}</p>
+  </div>
+  <p-button icon="pi pi-refresh" [label]="'ALERTS.REFRESH' | translate"
+            severity="secondary" [outlined]="true" (onClick)="load()" />
+</div>
+
+<!-- Filters -->
+<div class="filter-bar">
+  <p-select [options]="tableOptions()" [(ngModel)]="filterTable"
+            optionLabel="label" optionValue="value"
+            (onChange)="load()" styleClass="filter-select" />
+  <p-select [options]="actionOptions()" [(ngModel)]="filterAction"
+            optionLabel="label" optionValue="value"
+            (onChange)="load()" styleClass="filter-select" />
+  <p-datepicker [(ngModel)]="filterFrom" [placeholder]="'COMMON.FROM_DATE' | translate"
+                dateFormat="yy-mm-dd" [showIcon]="true" (onSelect)="load()" />
+  <p-datepicker [(ngModel)]="filterTo" [placeholder]="'COMMON.TO_DATE' | translate"
+                dateFormat="yy-mm-dd" [showIcon]="true" (onSelect)="load()" />
+  <p-button icon="pi pi-filter-slash" severity="secondary" [outlined]="true"
+            (onClick)="resetFilters()" [pTooltip]="'COMMON.RESET' | translate" />
+</div>
+
+<!-- Table -->
+<div class="table-card">
+  <p-table [value]="logs()" [loading]="loading()" [lazy]="true"
+           [totalRecords]="totalRecords()" [rows]="pageSize"
+           [paginator]="true" [rowsPerPageOptions]="[20,50,100]"
+           (onPage)="onPageChange($event)"
+           [tableStyle]="{'min-width':'800px'}" styleClass="p-datatable-sm">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width:60px">#</th>
+        <th>{{ 'AUDIT.TABLE' | translate }}</th>
+        <th style="width:80px">{{ 'AUDIT.RECORD_ID' | translate }}</th>
+        <th style="width:100px">{{ 'AUDIT.ACTION' | translate }}</th>
+        <th>{{ 'AUDIT.ACTION_BY' | translate }}</th>
+        <th>{{ 'AUDIT.DATE' | translate }}</th>
+        <th style="text-align:center;width:80px">{{ 'COMMON.ACTIONS' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-log>
+      <tr>
+        <td class="text-caption" style="color:var(--color-text-tertiary)">{{ log.logId }}</td>
+        <td><span class="table-name">{{ log.tableName }}</span></td>
+        <td>{{ log.recordId }}</td>
+        <td>
+          <p-tag [value]="log.action" [severity]="getActionSeverity(log.action)" />
+        </td>
+        <td>{{ log.actionByName ?? '—' }}</td>
+        <td class="text-caption">{{ log.actionDate | date:'dd MMM yyyy HH:mm:ss' }}</td>
+        <td style="text-align:center">
+          <p-button icon="pi pi-eye" [text]="true" [rounded]="true" severity="secondary"
+                    (onClick)="viewDetail(log)" [pTooltip]="'AUDIT.VIEW_CHANGES' | translate" />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="7" class="empty-msg">{{ 'COMMON.NO_DATA' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Detail Dialog -->
+<p-dialog [header]="'AUDIT.CHANGES' | translate" [(visible)]="showDetail"
+          [modal]="true" [style]="{width:'680px'}" [draggable]="false">
+  @if (selectedLog()) {
+    <div class="detail-meta">
+      <div class="meta-row">
+        <span class="meta-label">{{ 'AUDIT.TABLE' | translate }}:</span>
+        <span class="table-name">{{ selectedLog()!.tableName }}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">{{ 'AUDIT.RECORD_ID' | translate }}:</span>
+        <span>{{ selectedLog()!.recordId }}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">{{ 'AUDIT.ACTION' | translate }}:</span>
+        <p-tag [value]="selectedLog()!.action" [severity]="getActionSeverity(selectedLog()!.action)" />
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">{{ 'AUDIT.ACTION_BY' | translate }}:</span>
+        <span>{{ selectedLog()!.actionByName ?? '—' }}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">{{ 'AUDIT.DATE' | translate }}:</span>
+        <span>{{ selectedLog()!.actionDate | date:'dd MMM yyyy HH:mm:ss' }}</span>
+      </div>
+    </div>
+
+    <div class="json-section">
+      <div class="json-col">
+        <div class="json-header old">{{ 'AUDIT.OLD_VALUES' | translate }}</div>
+        <pre class="json-block">{{ formatJson(selectedLog()!.oldValues) }}</pre>
+      </div>
+      <div class="json-col">
+        <div class="json-header new">{{ 'AUDIT.NEW_VALUES' | translate }}</div>
+        <pre class="json-block">{{ formatJson(selectedLog()!.newValues) }}</pre>
+      </div>
+    </div>
+  }
+</p-dialog>

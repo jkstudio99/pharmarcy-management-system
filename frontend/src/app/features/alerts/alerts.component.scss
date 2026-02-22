@@ -1,0 +1,42 @@
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.alert-section { margin-bottom: 24px; }
+
+.section-header { margin-bottom: 12px; }
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  i { font-size: 20px; }
+}
+
+.table-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.stock-critical { color: var(--color-error); font-weight: 700; }
+.batch-no { font-family: monospace; font-size: 13px; color: var(--color-text-secondary); }
+
+.empty-msg {
+  text-align: center;
+  padding: 32px !important;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mb-4 { margin-bottom: 16px; }

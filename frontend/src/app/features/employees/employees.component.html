@@ -1,0 +1,89 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page-header">
+  <div>
+    <h1 class="text-title-1">{{ 'EMPLOYEES.TITLE' | translate }}</h1>
+    <p class="text-subhead" style="color:var(--color-text-secondary)">{{ 'EMPLOYEES.SUBTITLE' | translate }}</p>
+  </div>
+</div>
+
+<div class="table-card">
+  <p-table [value]="employees()" [loading]="loading()" [tableStyle]="{'min-width':'600px'}">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'EMPLOYEES.NAME' | translate }}</th>
+        <th>{{ 'EMPLOYEES.EMAIL' | translate }}</th>
+        <th>{{ 'EMPLOYEES.ROLES' | translate }}</th>
+        <th style="text-align:center">{{ 'EMPLOYEES.STATUS' | translate }}</th>
+        <th style="text-align:center">{{ 'COMMON.ACTIONS' | translate }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-e>
+      <tr>
+        <td data-label="Name"><strong>{{ e.empName }}</strong></td>
+        <td data-label="Email">{{ e.email }}</td>
+        <td data-label="Roles">
+          <div class="role-badges">
+            @for (role of e.roles; track role) {
+              <span [class]="'badge ' + getRoleBadge(role)">{{ role }}</span>
+            }
+          </div>
+        </td>
+        <td data-label="Status" style="text-align:center">
+          @if (e.isActive) {
+            <span class="badge badge-success">{{ 'EMPLOYEES.ACTIVE' | translate }}</span>
+          } @else {
+            <span class="badge badge-neutral">{{ 'EMPLOYEES.INACTIVE' | translate }}</span>
+          }
+        </td>
+        <td data-label="Actions" style="text-align:center">
+          <div class="action-btns">
+            <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" severity="secondary"
+                      (onClick)="openEdit(e)" [pTooltip]="'COMMON.EDIT' | translate" />
+            @if (e.isActive) {
+              <p-button icon="pi pi-ban" [text]="true" [rounded]="true" severity="danger"
+                        (onClick)="confirmDeactivate(e)" [pTooltip]="'COMMON.DEACTIVATE' | translate" />
+            }
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="5" class="empty-msg">{{ 'COMMON.NO_DATA' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Edit Dialog -->
+<p-dialog [header]="'EMPLOYEES.EDIT' | translate" [(visible)]="showDialog"
+          [modal]="true" [style]="{width:'480px'}" [draggable]="false">
+  <div class="dialog-form">
+    <div class="form-field">
+      <label class="field-label">{{ 'EMPLOYEES.NAME' | translate }} *</label>
+      <input pInputText [(ngModel)]="form.empName" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'EMPLOYEES.EMAIL' | translate }} *</label>
+      <input pInputText [(ngModel)]="form.email" type="email" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'EMPLOYEES.ROLES' | translate }}</label>
+      <p-multiselect [options]="roleOptions" [(ngModel)]="form.roleIds"
+                     [placeholder]="'EMPLOYEES.SELECT_ROLES' | translate" optionLabel="label" optionValue="value"
+                     styleClass="w-full" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'EMPLOYEES.NEW_PASSWORD' | translate }} <span style="color:var(--color-text-secondary)">({{ 'EMPLOYEES.NEW_PASSWORD_HINT' | translate }})</span></label>
+      <input pInputText [(ngModel)]="form.newPassword" type="password" [placeholder]="'EMPLOYEES.PH_PASSWORD' | translate" />
+    </div>
+    <div class="form-field toggle-field">
+      <label class="field-label">{{ 'EMPLOYEES.ACTIVE' | translate }}</label>
+      <p-toggleswitch [(ngModel)]="form.isActive" />
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button [label]="'COMMON.CANCEL' | translate" severity="secondary" [outlined]="true" (onClick)="showDialog.set(false)" />
+    <p-button [label]="'COMMON.SAVE' | translate" icon="pi pi-check" (onClick)="save()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>

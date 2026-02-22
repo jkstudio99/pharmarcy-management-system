@@ -1,0 +1,61 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page-header">
+  <div>
+    <h1 class="text-title-1">{{ 'CATEGORIES.TITLE' | translate }}</h1>
+    <p class="text-subhead" style="color:var(--color-text-secondary)">{{ 'CATEGORIES.SUBTITLE' | translate }}</p>
+  </div>
+  @if (auth.isPharmacistUp()) {
+    <p-button [label]="'CATEGORIES.ADD' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
+  }
+</div>
+
+<div class="table-card">
+  <p-table [value]="categories()" [loading]="loading()" [tableStyle]="{'min-width':'400px'}">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th>{{ 'CATEGORIES.NAME' | translate }}</th>
+        <th>{{ 'CATEGORIES.DESCRIPTION' | translate }}</th>
+        @if (auth.isPharmacistUp()) { <th style="text-align:center">{{ 'COMMON.ACTIONS' | translate }}</th> }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-c let-i="rowIndex">
+      <tr>
+        <td data-label="#">{{ i + 1 }}</td>
+        <td data-label="Category Name"><strong>{{ c.categoryName }}</strong></td>
+        <td data-label="Description">{{ c.description ?? '—' }}</td>
+        @if (auth.isPharmacistUp()) {
+          <td data-label="Actions" style="text-align:center">
+            <div class="action-btns">
+              <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" severity="secondary" (onClick)="openEdit(c)" />
+              <p-button icon="pi pi-trash" [text]="true" [rounded]="true" severity="danger" (onClick)="confirmDelete(c)" />
+            </div>
+          </td>
+        }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td [attr.colspan]="auth.isPharmacistUp() ? 4 : 3" class="empty-msg">{{ 'COMMON.NO_DATA' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [header]="(editMode() ? 'CATEGORIES.EDIT' : 'CATEGORIES.ADD') | translate"
+          [(visible)]="showDialog" [modal]="true" [style]="{width:'440px'}" [draggable]="false">
+  <div class="dialog-form">
+    <div class="form-field">
+      <label class="field-label">{{ 'CATEGORIES.NAME' | translate }} *</label>
+      <input pInputText [(ngModel)]="form.categoryName" [placeholder]="'CATEGORIES.PH_NAME' | translate" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'CATEGORIES.DESCRIPTION' | translate }}</label>
+      <textarea pTextarea [(ngModel)]="form.description" rows="3" [placeholder]="'CATEGORIES.PH_DESCRIPTION' | translate"></textarea>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button [label]="'COMMON.CANCEL' | translate" severity="secondary" [outlined]="true" (onClick)="showDialog.set(false)" />
+    <p-button [label]="(editMode() ? 'COMMON.SAVE' : 'COMMON.CREATE') | translate" icon="pi pi-check" (onClick)="save()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>

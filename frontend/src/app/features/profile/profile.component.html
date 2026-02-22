@@ -1,0 +1,118 @@
+<p-toast />
+
+<div class="profile-page">
+  <!-- Header Card -->
+  <div class="profile-hero">
+    <div class="avatar-ring">
+      <div class="avatar-xl">{{ getInitials(user()?.empName) }}</div>
+    </div>
+    <div class="hero-info">
+      <h1 class="text-title-1">{{ user()?.empName }}</h1>
+      <p class="hero-email">{{ user()?.email }}</p>
+      <div class="role-tags">
+        @for (role of user()?.roles ?? []; track role) {
+          <p-tag [value]="role" [severity]="getRoleColor(role)" styleClass="role-tag" />
+        }
+      </div>
+    </div>
+  </div>
+
+  <p-divider />
+
+  <!-- Info Grid -->
+  <div class="info-grid">
+    <!-- Account Info -->
+    <div class="info-card">
+      <div class="info-card-header">
+        <i class="pi pi-user"></i>
+        <span>{{ 'PROFILE.ACCOUNT_INFO' | translate }}</span>
+      </div>
+      <div class="info-rows">
+        <div class="info-row">
+          <span class="info-label">{{ 'PROFILE.FULL_NAME' | translate }}</span>
+          <span class="info-value">{{ user()?.empName ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">{{ 'PROFILE.EMAIL' | translate }}</span>
+          <span class="info-value">{{ user()?.email ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">{{ 'PROFILE.EMPLOYEE_ID' | translate }}</span>
+          <span class="info-value">#{{ user()?.eId ?? '—' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">{{ 'PROFILE.ROLES' | translate }}</span>
+          <span class="info-value">{{ user()?.roles?.join(', ') ?? '—' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Permissions -->
+    <div class="info-card">
+      <div class="info-card-header">
+        <i class="pi pi-shield"></i>
+        <span>{{ 'PROFILE.PERMISSIONS' | translate }}</span>
+      </div>
+      <div class="permission-list">
+        <div class="perm-item granted">
+          <i class="pi pi-check-circle"></i>
+          <span>{{ 'PROFILE.PERM_DASHBOARD' | translate }}</span>
+        </div>
+        <div class="perm-item granted">
+          <i class="pi pi-check-circle"></i>
+          <span>{{ 'PROFILE.PERM_VIEW_MEDICINES' | translate }}</span>
+        </div>
+        <div class="perm-item granted">
+          <i class="pi pi-check-circle"></i>
+          <span>{{ 'PROFILE.PERM_INVENTORY' | translate }}</span>
+        </div>
+        <div class="perm-item granted">
+          <i class="pi pi-check-circle"></i>
+          <span>{{ 'PROFILE.PERM_ALERTS' | translate }}</span>
+        </div>
+        <div class="perm-item" [class.granted]="auth.isPharmacistUp()">
+          <i class="pi" [class.pi-check-circle]="auth.isPharmacistUp()" [class.pi-times-circle]="!auth.isPharmacistUp()"></i>
+          <span>{{ 'PROFILE.PERM_MEDICINES_SALES' | translate }}</span>
+        </div>
+        <div class="perm-item" [class.granted]="auth.isAdmin()">
+          <i class="pi" [class.pi-check-circle]="auth.isAdmin()" [class.pi-times-circle]="!auth.isAdmin()"></i>
+          <span>{{ 'PROFILE.PERM_ADMIN' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="change-pw-section">
+    <div class="change-pw-header" (click)="showChangePassword.set(!showChangePassword())">
+      <div class="change-pw-title">
+        <i class="pi pi-lock"></i>
+        <span class="text-headline">{{ 'PROFILE.CHANGE_PASSWORD' | translate }}</span>
+      </div>
+      <i class="pi" [class.pi-chevron-down]="!showChangePassword()" [class.pi-chevron-up]="showChangePassword()"></i>
+    </div>
+
+    @if (showChangePassword()) {
+      <div class="change-pw-form">
+        <div class="pw-field">
+          <label class="pw-label">{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</label>
+          <p-password [(ngModel)]="pwForm.current" [feedback]="false" [toggleMask]="true" styleClass="w-full" />
+        </div>
+        <div class="pw-field">
+          <label class="pw-label">{{ 'PROFILE.NEW_PASSWORD' | translate }}</label>
+          <p-password [(ngModel)]="pwForm.newPw" [feedback]="true" [toggleMask]="true" styleClass="w-full" />
+        </div>
+        <div class="pw-field">
+          <label class="pw-label">{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</label>
+          <p-password [(ngModel)]="pwForm.confirm" [feedback]="false" [toggleMask]="true" styleClass="w-full" />
+        </div>
+        <div class="pw-actions">
+          <p-button [label]="'COMMON.CANCEL' | translate" severity="secondary" [outlined]="true"
+                    (onClick)="showChangePassword.set(false)" />
+          <p-button [label]="'PROFILE.SAVE_PASSWORD' | translate" icon="pi pi-lock"
+                    (onClick)="submitChangePassword()" [loading]="changingPassword()" />
+        </div>
+      </div>
+    }
+  </div>
+</div>

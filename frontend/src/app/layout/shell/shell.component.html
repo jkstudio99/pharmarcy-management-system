@@ -1,0 +1,102 @@
+<p-toast />
+
+<!-- Mobile overlay backdrop -->
+<div class="sidebar-backdrop" [class.open]="sidebarOpen()" (click)="toggleSidebar()"></div>
+
+<!-- ── Sidebar ──────────────────────────────────────────────── -->
+<aside class="sidebar" [class.open]="sidebarOpen()" [class.collapsed]="sidebarCollapsed()">
+  <!-- Logo -->
+  <a class="sidebar-logo" routerLink="/dashboard" (click)="sidebarOpen.set(false)">
+    <div class="logo-icon">
+      <i class="pi pi-heart-fill"></i>
+    </div>
+    <span class="logo-text">PharmaSys</span>
+  </a>
+
+  <!-- Nav -->
+  <nav class="sidebar-nav">
+    @for (item of visibleNavItems(); track item.route) {
+      <a class="nav-item" [routerLink]="item.route" routerLinkActive="active"
+         (click)="sidebarOpen.set(false)"
+         [pTooltip]="item.label | translate" tooltipPosition="right"
+         [tooltipDisabled]="!sidebarCollapsed()">
+        <div class="nav-icon-wrap">
+          <i [class]="item.icon + ' nav-icon'"></i>
+          @if (item.route === '/alerts' && alertCount() > 0) {
+            <span class="nav-badge">{{ alertCount() > 99 ? '99+' : alertCount() }}</span>
+          }
+        </div>
+        <span class="nav-label">{{ item.label | translate }}</span>
+        @if (item.route === '/alerts' && alertCount() > 0 && !sidebarCollapsed()) {
+          <span class="nav-badge-inline">{{ alertCount() > 99 ? '99+' : alertCount() }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <!-- User + Logout -->
+  <div class="sidebar-footer">
+    <a class="user-info" routerLink="/profile" routerLinkActive="active"
+       (click)="sidebarOpen.set(false)"
+       [pTooltip]="'Profile'" tooltipPosition="right"
+       [tooltipDisabled]="!sidebarCollapsed()">
+      <div class="user-avatar">
+        {{ user()?.empName?.charAt(0)?.toUpperCase() }}
+      </div>
+      <div class="user-details">
+        <div class="user-name">{{ user()?.empName }}</div>
+        <div class="user-role">{{ user()?.roles?.[0] }}</div>
+      </div>
+    </a>
+    <button class="logout-btn" (click)="logout()" [title]="'AUTH.SIGN_OUT' | translate">
+      <i class="pi pi-sign-out"></i>
+    </button>
+  </div>
+</aside>
+
+<!-- ── Main Content ─────────────────────────────────────────── -->
+<div class="main-wrapper" [class.collapsed]="sidebarCollapsed()">
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="hamburger" (click)="toggleSidebar()">
+      <i class="pi pi-bars"></i>
+    </button>
+    <button class="collapse-btn" (click)="toggleCollapse()">
+      <i class="pi" [class.pi-chevron-left]="!sidebarCollapsed()" [class.pi-chevron-right]="sidebarCollapsed()"></i>
+    </button>
+
+    <div class="topbar-right">
+      <!-- Language Switcher -->
+      <div class="lang-select-wrap">
+        <p-select
+          [options]="languages"
+          [ngModel]="i18n.selectedOption"
+          (ngModelChange)="i18n.setOption($event)"
+          optionLabel="label"
+          [showClear]="false">
+          <ng-template pTemplate="selectedItem" let-opt>
+            <span>{{ opt.flag }} {{ opt.label }}</span>
+          </ng-template>
+          <ng-template pTemplate="item" let-opt>
+            <span>{{ opt.flag }} {{ opt.label }}</span>
+          </ng-template>
+        </p-select>
+      </div>
+
+      <!-- Theme Toggle -->
+      <button class="theme-toggle-btn"
+              (click)="theme.toggle()"
+              [pTooltip]="(theme.isDark() ? 'THEME.LIGHT' : 'THEME.DARK') | translate"
+              tooltipPosition="bottom">
+        <i class="pi" [class.pi-sun]="theme.isDark()" [class.pi-moon]="!theme.isDark()"></i>
+      </button>
+
+      <span class="user-greeting">{{ user()?.empName }}</span>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="page-content">
+    <router-outlet />
+  </main>
+</div>

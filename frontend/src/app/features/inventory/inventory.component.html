@@ -1,0 +1,185 @@
+<p-toast />
+
+<div class="page-header">
+  <div>
+    <h1 class="text-title-1">{{ 'INVENTORY.TITLE' | translate }}</h1>
+    <p class="text-subhead" style="color:var(--color-text-secondary)">{{ 'INVENTORY.SUBTITLE' | translate }}</p>
+  </div>
+  <div class="header-actions">
+    <p-button [label]="'INVENTORY.STOCK_IN' | translate" icon="pi pi-arrow-down" (onClick)="openStockIn()" />
+    <p-button [label]="'INVENTORY.STOCK_OUT' | translate" icon="pi pi-arrow-up"
+              severity="secondary" [outlined]="true" (onClick)="openStockOut()" />
+  </div>
+</div>
+
+<div class="table-card">
+  <p-table [value]="batches()" [loading]="loading()" [lazy]="true"
+           [totalRecords]="totalRecords()" [rows]="pageSize"
+           [paginator]="true" [rowsPerPageOptions]="[10,20,50]"
+           (onPage)="onPageChange($event)"
+           [tableStyle]="{'min-width':'800px'}" styleClass="p-datatable-sm">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'INVENTORY.BATCH_NO' | translate }}</th>
+        <th>{{ 'INVENTORY.DRUG_NAME' | translate }}</th>
+        <th>{{ 'INVENTORY.SUPPLIER' | translate }}</th>
+        <th style="text-align:right">{{ 'INVENTORY.QUANTITY' | translate }}</th>
+        <th style="text-align:right">{{ 'INVENTORY.SELLING_PRICE' | translate }}</th>
+        <th>{{ 'INVENTORY.EXP_DATE' | translate }}</th>
+        <th style="text-align:center">{{ 'INVENTORY.STATUS' | translate }}</th>
+        @if (auth.isAdmin()) { <th style="text-align:center;width:80px">{{ 'COMMON.ACTIONS' | translate }}</th> }
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-b>
+      <tr [class.row-expiring]="b.isExpiringSoon">
+        <td data-label="Batch No."><span class="batch-no">{{ b.batchNumber }}</span></td>
+        <td data-label="Drug Name">{{ b.drugName }}</td>
+        <td data-label="Supplier">{{ b.supplierName ?? '—' }}</td>
+        <td data-label="Qty" style="text-align:right">
+          <strong>{{ b.quantityInStock }}</strong>
+        </td>
+        <td data-label="Selling Price" style="text-align:right">
+          {{ b.sellingPrice != null ? ('฿' + b.sellingPrice.toFixed(2)) : '—' }}
+        </td>
+        <td data-label="Exp. Date">
+          {{ b.expDate ? (b.expDate | date:'dd MMM yyyy') : '—' }}
+        </td>
+        <td data-label="Status" style="text-align:center">
+          @if (b.isExpiringSoon) {
+            <span class="badge badge-error">{{ 'INVENTORY.EXPIRING_SOON' | translate }}</span>
+          } @else if (b.quantityInStock === 0) {
+            <span class="badge badge-neutral">{{ 'INVENTORY.OUT_OF_STOCK' | translate }}</span>
+          } @else {
+            <span class="badge badge-success">{{ 'INVENTORY.ACTIVE' | translate }}</span>
+          }
+        </td>
+        @if (auth.isAdmin()) {
+          <td style="text-align:center">
+            <p-button icon="pi pi-sliders-h" [text]="true" [rounded]="true" severity="warn"
+                      (onClick)="openAdjust(b)" [pTooltip]="'INVENTORY.ADJUST' | translate" />
+          </td>
+        }
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr><td [attr.colspan]="auth.isAdmin() ? 8 : 7" class="empty-msg">{{ 'COMMON.NO_DATA' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Stock In Dialog -->
+<p-dialog [header]="'INVENTORY.STOCK_IN_TITLE' | translate" [(visible)]="showStockIn"
+          [modal]="true" [style]="{width:'560px'}" [draggable]="false" [resizable]="false">
+  <div class="dialog-form">
+    <div class="form-row">
+      <div class="form-field">
+        <label class="field-label">{{ 'INVENTORY.DRUG' | translate }} *</label>
+        <p-select [options]="medicineOptions()" [(ngModel)]="form.drugId"
+                  [placeholder]="'INVENTORY.PH_SELECT_DRUG' | translate" [filter]="true" [filterPlaceholder]="'INVENTORY.PH_SEARCH' | translate" />
+      </div>
+      <div class="form-field">
+        <label class="field-label">{{ 'INVENTORY.SUPPLIER' | translate }}</label>
+        <p-select [options]="supplierOptions()" [(ngModel)]="form.supplierId"
+                  [placeholder]="'INVENTORY.PH_SELECT_SUPPLIER' | translate" [showClear]="true" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="field-label">{{ 'INVENTORY.BATCH_NUMBER' | translate }} *</label>
+        <input pInputText [(ngModel)]="form.batchNumber" [placeholder]="'INVENTORY.PH_BATCH_NUMBER' | translate" />
+      </div>
+      <div class="form-field">
+        <label class="field-label">{{ 'INVENTORY.QUANTITY' | translate }} *</label>
+        <p-inputNumber [(ngModel)]="form.quantity" [min]="1" [showButtons]="true" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="field-label">{{ 'INVENTORY.COST_PRICE' | translate }}</label>
+        <p-inputNumber [(ngModel)]="form.costPrice" [minFractionDigits]="2" prefix="฿" />
+      </div>
+      <div class="form-field">
+        <label class="field-label">{{ 'INVENTORY.SELLING_PRICE' | translate }}</label>
+        <p-inputNumber [(ngModel)]="form.sellingPrice" [minFractionDigits]="2" prefix="฿" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="field-label">{{ 'INVENTORY.MFG_DATE' | translate }}</label>
+        <p-datepicker [(ngModel)]="form.mfgDate" dateFormat="yy-mm-dd" [showIcon]="true" />
+      </div>
+      <div class="form-field">
+        <label class="field-label">{{ 'INVENTORY.EXP_DATE' | translate }}</label>
+        <p-datepicker [(ngModel)]="form.expDate" dateFormat="yy-mm-dd" [showIcon]="true" />
+      </div>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button [label]="'COMMON.CANCEL' | translate" severity="secondary" [outlined]="true" (onClick)="showStockIn.set(false)" />
+    <p-button [label]="'INVENTORY.ADD_STOCK' | translate" icon="pi pi-check" (onClick)="stockIn()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Stock Out Dialog (FEFO) -->
+<p-dialog [header]="'INVENTORY.STOCK_OUT_TITLE' | translate" [(visible)]="showStockOut"
+          [modal]="true" [style]="{width:'440px'}" [draggable]="false" [resizable]="false">
+  <div class="dialog-form">
+    <div class="form-field">
+      <label class="field-label">{{ 'INVENTORY.DRUG' | translate }} *</label>
+      <p-select [options]="medicineOptions()" [(ngModel)]="stockOutForm.drugId"
+                [placeholder]="'INVENTORY.PH_SELECT_DRUG' | translate" [filter]="true" [filterPlaceholder]="'INVENTORY.PH_SEARCH' | translate" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'INVENTORY.QUANTITY' | translate }} *</label>
+      <p-inputNumber [(ngModel)]="stockOutForm.quantity" [min]="1" [showButtons]="true" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'INVENTORY.REF_NO' | translate }}</label>
+      <input pInputText [(ngModel)]="stockOutForm.referenceNo" [placeholder]="'INVENTORY.PH_REF_NO' | translate" />
+    </div>
+    <div class="fefo-note">
+      <i class="pi pi-info-circle"></i>
+      {{ 'INVENTORY.FEFO_NOTE' | translate }}
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button [label]="'COMMON.CANCEL' | translate" severity="secondary" [outlined]="true" (onClick)="showStockOut.set(false)" />
+    <p-button [label]="'INVENTORY.DEDUCT_STOCK' | translate" icon="pi pi-arrow-up" severity="secondary"
+              (onClick)="stockOut()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Stock Adjust Dialog (Admin only) -->
+<p-dialog [header]="'INVENTORY.ADJUST_TITLE' | translate" [(visible)]="showAdjust"
+          [modal]="true" [style]="{width:'440px'}" [draggable]="false" [resizable]="false">
+  @if (selectedBatch) {
+    <div class="adjust-info">
+      <span class="field-label">{{ 'INVENTORY.BATCH_NO' | translate }}:</span>
+      <span class="batch-no">{{ selectedBatch.batchNumber }}</span>
+      &nbsp;·&nbsp;
+      <span class="field-label">{{ 'INVENTORY.DRUG_NAME' | translate }}:</span>
+      <strong>{{ selectedBatch.drugName }}</strong>
+      &nbsp;·&nbsp;
+      <span class="field-label">{{ 'INVENTORY.CURRENT_QTY' | translate }}:</span>
+      <strong>{{ selectedBatch.quantityInStock }}</strong>
+    </div>
+  }
+  <div class="dialog-form">
+    <div class="form-field">
+      <label class="field-label">{{ 'INVENTORY.NEW_QUANTITY' | translate }} *</label>
+      <p-inputNumber [(ngModel)]="adjustForm.newQuantity" [min]="0" [showButtons]="true" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'INVENTORY.REASON' | translate }}</label>
+      <input pInputText [(ngModel)]="adjustForm.reason" [placeholder]="'INVENTORY.PH_REASON' | translate" />
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button [label]="'COMMON.CANCEL' | translate" severity="secondary" [outlined]="true" (onClick)="showAdjust.set(false)" />
+    <p-button [label]="'INVENTORY.CONFIRM_ADJUST' | translate" icon="pi pi-check" severity="warn"
+              (onClick)="adjust()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>

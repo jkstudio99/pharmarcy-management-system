@@ -1,0 +1,213 @@
+.profile-page {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+// ── Hero ──────────────────────────────────────────────────────
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.avatar-ring {
+  padding: 4px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-info));
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.avatar-xl {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 3px solid var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -1px;
+}
+
+.hero-info {
+  flex: 1;
+  min-width: 0;
+
+  h1 { margin-bottom: 4px; }
+
+  .hero-email {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+  }
+}
+
+.role-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+// ── Info Grid ─────────────────────────────────────────────────
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+
+  i {
+    font-size: 16px;
+    color: var(--color-primary);
+  }
+}
+
+// ── Info Rows ─────────────────────────────────────────────────
+.info-rows { display: flex; flex-direction: column; gap: 14px; }
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-align: right;
+}
+
+// ── Permissions ───────────────────────────────────────────────
+.permission-list { display: flex; flex-direction: column; gap: 12px; }
+
+.perm-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+
+  i {
+    font-size: 16px;
+    color: var(--color-text-tertiary);
+    flex-shrink: 0;
+  }
+
+  &.granted {
+    color: var(--color-text-primary);
+    i { color: var(--color-success); }
+  }
+}
+
+// ── Change Password ──────────────────────────────────────────
+.change-pw-section {
+  margin-top: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.change-pw-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  cursor: pointer;
+  transition: background 150ms ease;
+  user-select: none;
+
+  &:hover { background: var(--color-secondary); }
+
+  > i { color: var(--color-text-tertiary); font-size: 14px; }
+}
+
+.change-pw-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  i { font-size: 16px; color: var(--color-primary); }
+}
+
+.change-pw-form {
+  padding: 0 24px 24px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+}
+
+.pw-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
+.pw-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.pw-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}

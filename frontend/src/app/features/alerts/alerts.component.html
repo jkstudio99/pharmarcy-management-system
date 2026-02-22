@@ -1,0 +1,96 @@
+<div class="page-header">
+  <div>
+    <h1 class="text-title-1">{{ 'ALERTS.TITLE' | translate }}</h1>
+    <p class="text-subhead" style="color:var(--color-text-secondary)">{{ 'ALERTS.SUBTITLE' | translate }}</p>
+  </div>
+  <p-button icon="pi pi-refresh" [label]="'ALERTS.REFRESH' | translate" severity="secondary" [outlined]="true" (onClick)="load()" />
+</div>
+
+@if (loading()) {
+  <p-skeleton height="200px" borderRadius="12px" styleClass="mb-4" />
+  <p-skeleton height="200px" borderRadius="12px" />
+} @else {
+  <!-- Low Stock -->
+  <div class="alert-section">
+    <div class="section-header">
+      <div class="section-title">
+        <i class="pi pi-exclamation-triangle" style="color:var(--color-warning)"></i>
+        <h2 class="text-title-3">{{ 'ALERTS.LOW_STOCK' | translate }}</h2>
+        <span class="badge badge-warning">{{ alerts()?.lowStockAlerts?.length ?? 0 }}</span>
+      </div>
+    </div>
+    <div class="table-card">
+      <p-table [value]="alerts()?.lowStockAlerts ?? []" [tableStyle]="{'min-width':'500px'}">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ 'ALERTS.DRUG_NAME' | translate }}</th>
+            <th style="text-align:right">{{ 'ALERTS.CURRENT_STOCK' | translate }}</th>
+            <th style="text-align:right">{{ 'ALERTS.REORDER_LEVEL' | translate }}</th>
+            <th style="text-align:center">{{ 'ALERTS.DEFICIT' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td data-label="Drug Name"><strong>{{ item.drugName }}</strong></td>
+            <td data-label="Current Stock" style="text-align:right">
+              <span class="stock-critical">{{ item.totalStock }}</span>
+            </td>
+            <td data-label="Reorder Level" style="text-align:right">{{ item.reorderLevel }}</td>
+            <td data-label="Deficit" style="text-align:center">
+              <span class="badge badge-error">-{{ item.reorderLevel - item.totalStock }}</span>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="4" class="empty-msg">
+            <i class="pi pi-check-circle" style="color:var(--color-success);font-size:20px"></i>
+            {{ 'ALERTS.NO_LOW_STOCK' | translate }}
+          </td></tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Expiring Soon -->
+  <div class="alert-section">
+    <div class="section-header">
+      <div class="section-title">
+        <i class="pi pi-calendar-times" style="color:var(--color-error)"></i>
+        <h2 class="text-title-3">{{ 'ALERTS.EXPIRING_SOON' | translate }}</h2>
+        <span class="badge badge-error">{{ alerts()?.expiryAlerts?.length ?? 0 }}</span>
+      </div>
+    </div>
+    <div class="table-card">
+      <p-table [value]="alerts()?.expiryAlerts ?? []" [tableStyle]="{'min-width':'600px'}">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>{{ 'ALERTS.DRUG_NAME' | translate }}</th>
+            <th>{{ 'ALERTS.BATCH_NO' | translate }}</th>
+            <th style="text-align:right">{{ 'ALERTS.QTY' | translate }}</th>
+            <th>{{ 'INVENTORY.EXP_DATE' | translate }}</th>
+            <th style="text-align:center">{{ 'ALERTS.DAYS_LEFT' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td data-label="Drug Name"><strong>{{ item.drugName }}</strong></td>
+            <td data-label="Batch No."><span class="batch-no">{{ item.batchNumber }}</span></td>
+            <td data-label="Qty" style="text-align:right">{{ item.quantityInStock }}</td>
+            <td data-label="Exp. Date">{{ item.expDate | date:'dd MMM yyyy' }}</td>
+            <td data-label="Days Left" style="text-align:center">
+              <span [class]="item.daysUntilExpiry <= 30 ? 'badge badge-error' : 'badge badge-warning'">
+                {{ item.daysUntilExpiry }}d
+              </span>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="5" class="empty-msg">
+            <i class="pi pi-check-circle" style="color:var(--color-success);font-size:20px"></i>
+            {{ 'ALERTS.NO_EXPIRING' | translate }}
+          </td></tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+}

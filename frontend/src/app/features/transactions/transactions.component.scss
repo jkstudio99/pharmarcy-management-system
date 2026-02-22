@@ -1,0 +1,32 @@
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.batch-no {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  background: var(--color-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+}
+
+.ref-no {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--color-info);
+}
+
+.qty-positive {
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.qty-negative {
+  color: var(--color-error);
+  font-weight: 700;
+}

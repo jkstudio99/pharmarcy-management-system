@@ -1,0 +1,74 @@
+<p-toast />
+<p-confirmDialog />
+
+<div class="page-header">
+  <div>
+    <h1 class="text-title-1">{{ 'SUPPLIERS.TITLE' | translate }}</h1>
+    <p class="text-subhead" style="color:var(--color-text-secondary)">{{ 'SUPPLIERS.SUBTITLE' | translate }}</p>
+  </div>
+  @if (auth.isAdmin()) {
+    <p-button [label]="'SUPPLIERS.ADD' | translate" icon="pi pi-plus" (onClick)="openCreate()" />
+  }
+</div>
+
+<div class="filter-bar">
+  <div class="search-wrap">
+    <i class="pi pi-search search-icon"></i>
+    <input pInputText [(ngModel)]="search" (keyup.enter)="load()"
+           [placeholder]="'SUPPLIERS.PH_SEARCH' | translate" class="search-input" />
+  </div>
+  <p-button icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="load()" />
+</div>
+
+<div class="table-card">
+  <p-table [value]="suppliers()" [loading]="loading()" [tableStyle]="{'min-width':'500px'}">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'SUPPLIERS.NAME' | translate }}</th>
+        <th>{{ 'SUPPLIERS.CONTACT' | translate }}</th>
+        <th>{{ 'SUPPLIERS.ADDRESS' | translate }}</th>
+        @if (auth.isAdmin()) { <th style="text-align:center">{{ 'COMMON.ACTIONS' | translate }}</th> }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-s>
+      <tr>
+        <td data-label="Supplier Name"><strong>{{ s.supplierName }}</strong></td>
+        <td data-label="Contact">{{ s.contact ?? '—' }}</td>
+        <td data-label="Address">{{ s.address ?? '—' }}</td>
+        @if (auth.isAdmin()) {
+          <td data-label="Actions" style="text-align:center">
+            <div class="action-btns">
+              <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" severity="secondary" (onClick)="openEdit(s)" />
+              <p-button icon="pi pi-trash" [text]="true" [rounded]="true" severity="danger" (onClick)="confirmDelete(s)" />
+            </div>
+          </td>
+        }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr><td [attr.colspan]="auth.isAdmin() ? 4 : 3" class="empty-msg">{{ 'COMMON.NO_DATA' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [header]="(editMode() ? 'SUPPLIERS.EDIT' : 'SUPPLIERS.ADD') | translate"
+          [(visible)]="showDialog" [modal]="true" [style]="{width:'480px'}" [draggable]="false">
+  <div class="dialog-form">
+    <div class="form-field">
+      <label class="field-label">{{ 'SUPPLIERS.NAME' | translate }} *</label>
+      <input pInputText [(ngModel)]="form.supplierName" [placeholder]="'SUPPLIERS.PH_NAME' | translate" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'SUPPLIERS.CONTACT' | translate }}</label>
+      <input pInputText [(ngModel)]="form.contact" [placeholder]="'SUPPLIERS.PH_CONTACT' | translate" />
+    </div>
+    <div class="form-field">
+      <label class="field-label">{{ 'SUPPLIERS.ADDRESS' | translate }}</label>
+      <textarea pTextarea [(ngModel)]="form.address" rows="3" [placeholder]="'SUPPLIERS.PH_ADDRESS' | translate"></textarea>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button [label]="'COMMON.CANCEL' | translate" severity="secondary" [outlined]="true" (onClick)="showDialog.set(false)" />
+    <p-button [label]="(editMode() ? 'COMMON.SAVE' : 'COMMON.CREATE') | translate" icon="pi pi-check" (onClick)="save()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>

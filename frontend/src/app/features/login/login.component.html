@@ -1,0 +1,63 @@
+<div class="login-page">
+  <!-- Top controls: lang + theme -->
+  <div class="login-controls">
+    <p-select
+      [options]="languages"
+      [ngModel]="i18n.selectedOption"
+      (ngModelChange)="i18n.setOption($event)"
+      optionLabel="label"
+      styleClass="lang-select"
+      [showClear]="false">
+      <ng-template pTemplate="selectedItem" let-opt>
+        <span>{{ opt.flag }} {{ opt.label }}</span>
+      </ng-template>
+      <ng-template pTemplate="item" let-opt>
+        <span>{{ opt.flag }} {{ opt.label }}</span>
+      </ng-template>
+    </p-select>
+    <button class="theme-toggle-btn" (click)="theme.toggle()"
+            [title]="(theme.isDark() ? 'THEME.LIGHT' : 'THEME.DARK') | translate">
+      <i class="pi" [class.pi-sun]="theme.isDark()" [class.pi-moon]="!theme.isDark()"></i>
+    </button>
+  </div>
+
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="login-logo">
+      <div class="logo-icon"><i class="pi pi-heart-fill"></i></div>
+      <h1 class="text-title-1">PharmaSys</h1>
+      <p class="text-subhead" style="color: var(--color-text-secondary); margin-top: 4px;">
+        Pharmacy Inventory Management
+      </p>
+    </div>
+
+    <!-- Error -->
+    @if (error()) {
+      <p-message severity="error" [text]="error()" styleClass="w-full mb-4" />
+    }
+
+    <!-- Form -->
+    <form (ngSubmit)="submit()" #loginForm="ngForm">
+      <div class="form-field">
+        <label class="field-label">{{ 'AUTH.EMAIL' | translate }}</label>
+        <input pInputText type="email" [(ngModel)]="email" name="email"
+               [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate"
+               required autocomplete="email" />
+      </div>
+
+      <div class="form-field">
+        <label class="field-label">{{ 'AUTH.PASSWORD' | translate }}</label>
+        <p-password [(ngModel)]="password" name="password" [feedback]="false"
+                    [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate"
+                    [toggleMask]="true" styleClass="w-full" inputStyleClass="w-full" required />
+      </div>
+
+      <p-button type="submit" [label]="'AUTH.SIGN_IN' | translate" icon="pi pi-sign-in"
+                styleClass="w-full mt-4" [loading]="loading()" />
+    </form>
+
+    <p class="login-hint text-caption">
+      {{ 'AUTH.LOGIN_HINT' | translate }}
+    </p>
+  </div>
+</div>

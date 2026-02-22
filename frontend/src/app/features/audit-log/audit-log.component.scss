@@ -1,0 +1,89 @@
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.table-name {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  background: var(--color-secondary);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--color-info);
+  font-weight: 600;
+}
+
+// ── Detail Dialog ─────────────────────────────────────────────
+.detail-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 16px;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meta-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  min-width: 100px;
+}
+
+// ── JSON Diff ─────────────────────────────────────────────────
+.json-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.json-col { display: flex; flex-direction: column; }
+
+.json-header {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &.old {
+    background: var(--color-error-light);
+    color: var(--color-error);
+  }
+
+  &.new {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+  }
+}
+
+.json-block {
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  padding: 12px;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 80px;
+  max-height: 300px;
+  overflow-y: auto;
+  color: var(--color-text-primary);
+  margin: 0;
+}

@@ -1,0 +1,69 @@
+<div class="page-header">
+  <div>
+    <h1 class="text-title-1">{{ 'TRANSACTIONS.TITLE' | translate }}</h1>
+    <p class="text-subhead" style="color:var(--color-text-secondary)">{{ 'TRANSACTIONS.SUBTITLE' | translate }}</p>
+  </div>
+  <p-button icon="pi pi-refresh" [label]="'ALERTS.REFRESH' | translate"
+            severity="secondary" [outlined]="true" (onClick)="load()" />
+</div>
+
+<!-- Filters -->
+<div class="filter-bar">
+  <p-select [options]="typeOptions()" [(ngModel)]="filterType"
+            optionLabel="label" optionValue="value"
+            (onChange)="load()" styleClass="filter-select" />
+  <p-datepicker [(ngModel)]="filterFrom" [placeholder]="'COMMON.FROM_DATE' | translate"
+                dateFormat="yy-mm-dd" [showIcon]="true" (onSelect)="load()" />
+  <p-datepicker [(ngModel)]="filterTo" [placeholder]="'COMMON.TO_DATE' | translate"
+                dateFormat="yy-mm-dd" [showIcon]="true" (onSelect)="load()" />
+  <p-button icon="pi pi-filter-slash" severity="secondary" [outlined]="true"
+            (onClick)="resetFilters()" [pTooltip]="'COMMON.RESET' | translate" />
+</div>
+
+<!-- Table -->
+<div class="table-card">
+  <p-table [value]="transactions()" [loading]="loading()" [lazy]="true"
+           [totalRecords]="totalRecords()" [rows]="pageSize"
+           [paginator]="true" [rowsPerPageOptions]="[20,50,100]"
+           (onPage)="onPageChange($event)"
+           [tableStyle]="{'min-width':'700px'}" styleClass="p-datatable-sm">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'TRANSACTIONS.TYPE' | translate }}</th>
+        <th>{{ 'TRANSACTIONS.DRUG' | translate }}</th>
+        <th>{{ 'TRANSACTIONS.BATCH' | translate }}</th>
+        <th style="text-align:right">{{ 'TRANSACTIONS.QTY' | translate }}</th>
+        <th>{{ 'TRANSACTIONS.EMPLOYEE' | translate }}</th>
+        <th>{{ 'TRANSACTIONS.REF' | translate }}</th>
+        <th>{{ 'TRANSACTIONS.NOTES' | translate }}</th>
+        <th>{{ 'TRANSACTIONS.DATE' | translate }}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-tx>
+      <tr>
+        <td>
+          <p-tag [value]="tx.transType" [severity]="getTypeSeverity(tx.transType)" />
+        </td>
+        <td data-label="Drug"><strong>{{ tx.drugName }}</strong></td>
+        <td data-label="Batch"><span class="batch-no">{{ tx.batchNumber }}</span></td>
+        <td data-label="Qty" style="text-align:right">
+          <span [class]="tx.quantity >= 0 ? 'qty-positive' : 'qty-negative'">
+            {{ tx.quantity >= 0 ? '+' : '' }}{{ tx.quantity }}
+          </span>
+        </td>
+        <td data-label="Employee">{{ tx.employeeName }}</td>
+        <td data-label="Ref"><span class="ref-no">{{ tx.referenceNo ?? '—' }}</span></td>
+        <td data-label="Notes" class="text-caption" style="color:var(--color-text-secondary)">
+          {{ tx.notes ?? '—' }}
+        </td>
+        <td data-label="Date" class="text-caption">{{ tx.createdAt | date:'dd MMM yyyy HH:mm' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr><td colspan="8" class="empty-msg">{{ 'COMMON.NO_DATA' | translate }}</td></tr>
+    </ng-template>
+  </p-table>
+</div>

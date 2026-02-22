@@ -1,0 +1,75 @@
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.table-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.batch-no { font-family: monospace; font-size: 13px; color: var(--color-text-secondary); }
+.row-expiring td { background: var(--color-error-light) !important; }
+.empty-msg { text-align: center; padding: 40px !important; color: var(--color-text-secondary); }
+
+// ── Header Actions ────────────────────────────────────────────
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+// ── FEFO Note ─────────────────────────────────────────────────
+.fefo-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+
+  i { color: var(--color-primary); margin-top: 2px; flex-shrink: 0; }
+}
+
+// ── Adjust Info ───────────────────────────────────────────────
+.adjust-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--color-secondary);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 4px;
+
+  .batch-no {
+    font-family: monospace;
+    font-size: 12px;
+    background: var(--color-surface);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+  }
+}
+
+.dialog-form { display: flex; flex-direction: column; gap: 16px; }
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-size: 14px; font-weight: 600; color: var(--color-text-primary); }

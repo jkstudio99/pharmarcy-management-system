@@ -1,0 +1,98 @@
+<div class="page-header">
+  <h1 class="text-title-1">{{ 'DASHBOARD.TITLE' | translate }}</h1>
+  <p class="text-subhead" style="color: var(--color-text-secondary);">{{ 'DASHBOARD.SUBTITLE' | translate }}</p>
+</div>
+
+<!-- Metric Cards -->
+<div class="metrics-grid">
+  @if (loading()) {
+    @for (i of [1,2,3,4]; track i) {
+      <div class="metric-card">
+        <p-skeleton height="80px" borderRadius="12px" />
+      </div>
+    }
+  } @else {
+    <div class="metric-card">
+      <div class="metric-icon icon-primary"><i class="pi pi-box"></i></div>
+      <div class="metric-body">
+        <div class="metric-value text-large-title">{{ summary()?.totalMedicines ?? 0 }}</div>
+        <div class="metric-label text-subhead">{{ 'DASHBOARD.TOTAL_MEDICINES' | translate }}</div>
+      </div>
+    </div>
+
+    <div class="metric-card clickable" routerLink="/alerts">
+      <div class="metric-icon icon-warning"><i class="pi pi-exclamation-triangle"></i></div>
+      <div class="metric-body">
+        <div class="metric-value text-large-title" style="color: var(--color-warning)">
+          {{ summary()?.lowStockCount ?? 0 }}
+        </div>
+        <div class="metric-label text-subhead">{{ 'DASHBOARD.LOW_STOCK' | translate }}</div>
+      </div>
+    </div>
+
+    <div class="metric-card clickable" routerLink="/alerts">
+      <div class="metric-icon icon-error"><i class="pi pi-calendar-times"></i></div>
+      <div class="metric-body">
+        <div class="metric-value text-large-title" style="color: var(--color-error)">
+          {{ summary()?.expiringSoonCount ?? 0 }}
+        </div>
+        <div class="metric-label text-subhead">{{ 'DASHBOARD.EXPIRING_SOON' | translate }}</div>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-icon icon-info"><i class="pi pi-arrow-right-arrow-left"></i></div>
+      <div class="metric-body">
+        <div class="metric-value text-large-title" style="color: var(--color-info)">
+          {{ summary()?.todayTransactions ?? 0 }}
+        </div>
+        <div class="metric-label text-subhead">{{ 'DASHBOARD.TODAY_SALES' | translate }}</div>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Quick Links -->
+<div class="quick-links">
+  <a class="quick-link" routerLink="/transactions">
+    <div class="ql-icon"><i class="pi pi-arrow-right-arrow-left"></i></div>
+    <div class="ql-body">
+      <div class="ql-title text-headline">{{ 'TRANSACTIONS.TITLE' | translate }}</div>
+      <div class="ql-sub text-caption">{{ 'TRANSACTIONS.SUBTITLE' | translate }}</div>
+    </div>
+    <i class="pi pi-chevron-right ql-arrow"></i>
+  </a>
+  <a class="quick-link" routerLink="/alerts">
+    <div class="ql-icon ql-icon-warn"><i class="pi pi-bell"></i></div>
+    <div class="ql-body">
+      <div class="ql-title text-headline">{{ 'ALERTS.TITLE' | translate }}</div>
+      <div class="ql-sub text-caption">{{ 'ALERTS.SUBTITLE' | translate }}</div>
+    </div>
+    <i class="pi pi-chevron-right ql-arrow"></i>
+  </a>
+  <a class="quick-link" routerLink="/inventory">
+    <div class="ql-icon ql-icon-info"><i class="pi pi-database"></i></div>
+    <div class="ql-body">
+      <div class="ql-title text-headline">{{ 'INVENTORY.TITLE' | translate }}</div>
+      <div class="ql-sub text-caption">{{ 'INVENTORY.SUBTITLE' | translate }}</div>
+    </div>
+    <i class="pi pi-chevron-right ql-arrow"></i>
+  </a>
+</div>
+
+<!-- Sales Chart -->
+<div class="chart-card">
+  <div class="chart-header">
+    <h2 class="text-title-3">{{ 'DASHBOARD.MONTHLY_SALES' | translate }}</h2>
+    <span class="text-caption" style="color: var(--color-text-secondary)">{{ 'DASHBOARD.LAST_6_MONTHS' | translate }}</span>
+  </div>
+  @if (loading()) {
+    <p-skeleton height="260px" borderRadius="8px" />
+  } @else if (chartData()) {
+    <div class="chart-wrapper">
+      <p-chart type="line" [data]="chartData()" [options]="chartOptions()" height="260px" />
+    </div>
+  } @else {
+    <div class="empty-chart text-subhead">{{ 'COMMON.NO_DATA' | translate }}</div>
+  }
+</div>
