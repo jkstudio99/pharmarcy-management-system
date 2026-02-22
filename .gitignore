@@ -1,0 +1,30 @@
+# .NET Core
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# Secrets
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+*.env
+*.env.*
+
+# Angular
+/frontend/dist/
+/frontend/tmp/
+/frontend/out-tsc/
+/frontend/bazel-out/
+/frontend/node_modules/
+/frontend/.angular/
+/frontend/test-results/
+/frontend/playwright-report/
+/frontend/blob-report/
+/frontend/playwright/.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
